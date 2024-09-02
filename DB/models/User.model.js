@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema,model } from "mongoose";
 
 
 const userSchema= new Schema({
@@ -20,7 +20,7 @@ const userSchema= new Schema({
     },
     phone:{
         type:String,
-        required:true,
+        
     },
    address:{
         type:String,
@@ -43,6 +43,7 @@ const userSchema= new Schema({
     role:{
         type:String,
         enum:['User','Admin'],
+        default:'User',
     },
 
 
