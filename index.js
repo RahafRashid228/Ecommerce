@@ -1,7 +1,7 @@
 import express from 'express';
 import 'dotenv/config';
 import initApp from './src/initApp.js';
-
+//import { sendEmail } from './src/Utils/sendEmail.js';
 
 const app= express();
  

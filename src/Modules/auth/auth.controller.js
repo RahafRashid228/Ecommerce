@@ -3,7 +3,7 @@ import userModel from '../../../DB/models/User.model.js';
 import bcrypt from 'bcryptjs/dist/bcrypt.js';
 import jwt from 'jsonwebtoken';
 //import { registerSchema } from './auth.validation.js';
-
+import { sendEmail } from '../../Utils/sendEmail.js';
 
 
 export const register =async (req,res)=>{
@@ -15,6 +15,14 @@ export const register =async (req,res)=>{
     const hasedPassword=bcrypt.hashSync(password,parseInt(process.env.SALTROUND))
 
     await userModel.create({userName,email,password:hasedPassword})
+    const html=`
+    <div>
+    <p> welcome Mr/s ${userName}</p>
+    <h1 style='background-color:teal;width:50%'>welcome</h1>
+    <h2>new account</h2>
+    </div>
+    `
+    sendEmail(email,'welcome',html)
     return res.status(201).json({message:"success"});
     //return error ()
     /////////////////global error/////////
