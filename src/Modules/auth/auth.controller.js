@@ -1,8 +1,8 @@
 import userModel from '../../../DB/models/User.model.js';
 //import categoryModel from '../../../DB/models/User.model.js';
-//import userModel from '../../../DB/models/User.model.js';
 import bcrypt from 'bcryptjs/dist/bcrypt.js';
 import jwt from 'jsonwebtoken';
+//import { registerSchema } from './auth.validation.js';
 
 
 
@@ -22,6 +22,7 @@ export const register =async (req,res)=>{
 
 export const login=(async(req,res)=>{
     const {email,password}=req.body;
+    
     const user= await userModel.findOne({email});
 
     if(!user){
