@@ -1,5 +1,6 @@
-import { required } from "joi";
+
 import mongoose, { Schema,model,Types } from "mongoose";
+
 
 
 const categorySchema= new Schema({
@@ -9,6 +10,7 @@ const categorySchema= new Schema({
     },
     image:{
         type:String,
+        required:true
         
     },
     status:{
@@ -31,5 +33,5 @@ const categorySchema= new Schema({
 },{
   timestamps:true,  
 }); 
-const categoryModel=mongoose.model('Category',CategorySchema);
-export default CategoryModel;
+const categoryModel=mongoose.model('Category',categorySchema);
+export default categoryModel;
