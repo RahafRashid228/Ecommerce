@@ -6,15 +6,11 @@ import categoryModel from "../../../DB/models/Category.model.js";
 
 export const createCategory= async(req,res,next)=>{
     
-    const user = await userModel.findById(req.id);
-    if(!user){
-        return next (new AppError('user not found', 404));
-    }
-    if (req.role !== 'admin') {
-        return next(new AppError('unauthenticated creation', 403));
-    }
-
     req.body.name=req.body.name.toLowerCase();
+    const existingCategory = await categoryModel.findOne({ name: req.body.name });
+        if (existingCategory) {
+            return next(new AppError('Category name already exists', 400));
+        }
     const {secure_url,public_id}=await cloudinary.uploader.upload(req.file.path,{folder:`${process.env.APPNAME}/category`});
     req.body.image=  {secure_url,public_id};
         req.body.createdBy=req.id;
@@ -61,12 +57,6 @@ export const getCategoryById = async (req, res, next) => {
 export const updateCategoryDetails = async (req, res, next) => {
 
         const userId = req.id; 
-        const userRole = req.role;  
-
-            if (userRole !== 'admin') {
-            return next(new AppError('You do not have Authentication to update this category.', 403));
-        }
-
         const { id } = req.params; 
         const { name, status } = req.body; 
 
@@ -105,11 +95,6 @@ export const updateCategoryDetails = async (req, res, next) => {
 export const updateCategoryImage = async (req, res, next) => {
 
     const userId = req.id; 
-    const userRole = req.role;  
-
-    if (userRole !== 'admin') {
-        return next(new AppError('You do not have Authentication to update this category.', 403));
-    }
 
     const { id } = req.params; 
 
@@ -154,11 +139,7 @@ export const updateCategoryImage = async (req, res, next) => {
 export const deleteCategory = async (req, res, next) => {
 
 
-    const userRole = req.role;  
-
-    if (userRole !== 'admin') {
-        return next(new AppError('You do not have Authentication to delete this category.', 403));
-    }
+    
 
     const { id } = req.params; 
     const category = await categoryModel.findByIdAndDelete(id);
