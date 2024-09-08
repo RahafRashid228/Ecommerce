@@ -5,8 +5,8 @@ import categoryModel from "../../../DB/models/Category.model.js";
 
 
 export const createCategory= async(req,res,next)=>{
-    const userId=req.id;
-    const user = await userModel.findById(userId);
+    
+    const user = await userModel.findById(req.id);
     if(!user){
         return next (new AppError('user not found', 404));
     }
@@ -14,19 +14,15 @@ export const createCategory= async(req,res,next)=>{
         return next(new AppError('unauthenticated creation', 403));
     }
 
-    const {name,status}=req.body;
-    
-    const existingCategory = await categoryModel.findOne({
-        name: lowerCase(name)
-    });
-
-    if (existingCategory) {
-        return next(new AppError('Category with this name already exists', 400));
-    }
+    req.body.name=req.body.name.toLowerCase();
     const {secure_url,public_id}=await cloudinary.uploader.upload(req.file.path,{folder:`${process.env.APPNAME}/category`});
-        const newCategory= await categoryModel.create ({name,image:{secure_url,public_id},status,createdBy:user._id,updatedBy:user._id});
+    req.body.image=  {secure_url,public_id};
+        req.body.createdBy=req.id;
+        req.body.updatedBy=req.id;
+        const category= await categoryModel.create(req.body);
 
-    return res.status(201).json({ message: "Success", category:{name,image:newCategory.image,status} });
+
+    return res.status(201).json({ message: "Success", category});
 
 
 };
