@@ -125,7 +125,7 @@ export const updateCategoryImage = async (req, res, next) => {
     }
 
     const { secure_url } = await cloudinary.uploader.upload(req.file.path);
-    console.log("Uploaded Image URL:", secure_url);
+   // console.log("Uploaded Image URL:", secure_url);
 
 
     const updatedCategory = await categoryModel.findByIdAndUpdate(
@@ -140,11 +140,11 @@ export const updateCategoryImage = async (req, res, next) => {
     if (!updatedCategory) {
         return next(new AppError('Category not found', 404));
     }
-    console.log("Updated Category:", updatedCategory);
+    //console.log("Updated Category:", updatedCategory);
 
 
     return res.status(200).json({
-        message: "Category image updated successfully",
+        message: "success",
         category: {
             image: updatedCategory.image,
             updatedBy: updatedCategory.updatedBy
@@ -170,9 +170,10 @@ export const deleteCategory = async (req, res, next) => {
     if (!category) {
         return next(new AppError('Category not found', 404));
     }
+    await cloudinary.uploader.destroy(category.image.public_id);
 
     return res.status(200).json({
-        message: "Category deleted successfully"
+        message: "success"
     });
 
 };
