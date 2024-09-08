@@ -7,7 +7,7 @@ import { sendEmail } from '../../Utils/sendEmail.js';
 import cloudinary from "../../Utils/cloudinary.js";
 
 export const register =async (req,res)=>{
-    const{userName,email,password,role}=req.body;
+    const{userName,email,password,role,cpassword}=req.body;
     const user=await userModel.findOne({email});
     if(user){
         return next(new AppError('email exist', 409));

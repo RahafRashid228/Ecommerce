@@ -17,17 +17,16 @@ export const createCategory= async(req,res,next)=>{
     const {name,status}=req.body;
     
     const existingCategory = await categoryModel.findOne({
-        name: { $regex: new RegExp(`^${name}$`, 'i') } 
+        name: lowerCase(name)
     });
 
     if (existingCategory) {
         return next(new AppError('Category with this name already exists', 400));
     }
-    const {secure_url}=await cloudinary.uploader.upload(req.file.path);
-    const newCategory= await categoryModel.create ({name,image:secure_url,status,createdBy:user._id,updatedBy:user._id});
+    const {secure_url,public_id}=await cloudinary.uploader.upload(req.file.path,{folder:`${process.env.APPNAME}/category`});
+        const newCategory= await categoryModel.create ({name,image:{secure_url,public_id},status,createdBy:user._id,updatedBy:user._id});
 
-
-    return res.status(201).json({ message: "Category created successfully", category:{name,image:newCategory.image,status} });
+    return res.status(201).json({ message: "Success", category:{name,image:newCategory.image,status} });
 
 
 };
