@@ -105,14 +105,25 @@ export const updateCategoryImage = async (req, res, next) => {
         return next(new AppError('File path is undefined', 400));
     }
 
-    const { secure_url } = await cloudinary.uploader.upload(req.file.path);
-   // console.log("Uploaded Image URL:", secure_url);
+    const category = await categoryModel.findById(id);
+    if (!category) {
+        return next(new AppError('Category not found', 404));
+    }
+
+    
+    if (category.image && category.image.public_id) {
+        await cloudinary.uploader.destroy(category.image.public_id);
+    }
+
+    
+    const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, { folder: `${process.env.APPNAME}/category` });
+   
 
 
     const updatedCategory = await categoryModel.findByIdAndUpdate(
         id,
         {
-            image: secure_url,
+            image: { secure_url, public_id },
             updatedBy: userId
         },
         { new: true }
